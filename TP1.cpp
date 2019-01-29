@@ -40,10 +40,9 @@ class Pile
 			if(taille > 0)
 			{
 				delete[] elems;
-				taille = 0;
 			}
 			elems = temp;
-			taille ++;
+			taille++;
 		}
 
 		int depiler()
@@ -56,6 +55,14 @@ class Pile
 			elems = temp;
 			return rtn;
 		}
+		
+		void afficher()
+		{
+			cout << "pile :" << endl;
+			for(int i = 0; i < taille; i++)
+				cout << elems[i] << " ";
+			cout << "\n" << endl;
+		}
 };
 
 
@@ -64,9 +71,9 @@ class Pile
 on suppose que le fichier donné à une matrice valide */
 void remplissage(int &t, int **&c)
 {
-	//cout << "Saisissez le nom de fichier contenant une matrice " << endl ;
-	string nom = "matrice1";
-	//cin >> nom ;
+	cout << "Saisissez le nom de fichier contenant une matrice " << endl ;
+	string nom;
+	cin >> nom ;
 
 	ifstream fichier(nom);
 	if(fichier.is_open())
@@ -118,7 +125,7 @@ void chaineaugmentante(int *&ch, int **c, int **f, int s, int t)
 		visites[i] = false; ch[i] = -1;
 	}
 	P.empiler(s);
-	while(P.nonVide() && !stop)
+	while(P.nonVide() && (!stop))
 	{
 		int i = P.depiler();
 		if(i == t)
@@ -165,7 +172,6 @@ int increment(int *ch, int **c, int **f, int s, int t)
 		j = i;
 		i = ch[i];
 	}
-	cout << temp << endl;
 	return temp;
 }
 
@@ -204,7 +210,6 @@ void flotmax(int **c, int **&f, int s, int t)
 			i = ch[i];
 		}
 		chaineaugmentante(ch,c,f,s,t);
-		cout << ch[t] << endl;
 	}
 }
 
@@ -223,7 +228,7 @@ int main()
 	remplissage(t,c);
 	
 	// calcul du flot max
-	flotmax(c,f,s,t);
+	flotmax(c,f,1,3);
 	
 	// affichage du flot max
 	for(int i = 0; i < t+1; i++)
