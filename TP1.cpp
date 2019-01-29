@@ -148,9 +148,7 @@ int increment(int *ch, int **c, int **f, int s, int t)
 	int i = t;
 	while(ch[i] != s)
 	{
-
 		i = ch[i];
-
 	}
 }
 
