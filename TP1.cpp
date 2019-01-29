@@ -94,7 +94,7 @@ void remplissage(int &t, int **&c)
 			// on peut changer le séparateur suivant les besoins
 			while(getline(iss, buffer, ' ')) {
 			    c[i][j] = stoi(buffer);
-					j++;
+				j++;
 			}
 		}
 		fichier.close();
@@ -110,8 +110,7 @@ void remplissage(int &t, int **&c)
 // remplit un tableau avec la liste des sommets constituants une chaine augmentante
 void chaineaugmentante(int *&ch, int **c, int **f, int s, int t)
 {
-  bool *visites = new bool[t+1];
-	ch = new int[t+1];
+	bool *visites = new bool[t+1];
 	Pile P = Pile();
 	bool stop = false;
 	for(int i = 0; i < t+1; i++)
@@ -133,7 +132,7 @@ void chaineaugmentante(int *&ch, int **c, int **f, int s, int t)
 			{
 				if(visites[j] == false)
 				{
-					if(((c[i][j] > 0) && (c[i][j] > f[i][j])) || ((c[j][i] > 0) && (f[i][j] > 0)))
+					if(((c[i][j] > 0) && (c[i][j] > f[i][j])) || ((c[j][i] > 0) && (f[j][i] > 0)))
 					{
 						P.empiler(j); ch[j] = i;
 					}
@@ -145,42 +144,95 @@ void chaineaugmentante(int *&ch, int **c, int **f, int s, int t)
 
 int increment(int *ch, int **c, int **f, int s, int t)
 {
-	int i = t;
-	while(ch[i] != s)
+	int temp;
+	int i = ch[t];
+	int j = t;
+	temp = c[i][j];
+	while(true)
 	{
+		if(i == s) 
+		{
+			if(temp > (c[i][j]-f[i][j]))
+			{
+				temp = c[i][j]-f[i][j];
+			}
+			break;
+		}
+		if(temp > (c[i][j]-f[i][j]))
+		{
+			temp = c[i][j]-f[i][j];
+		}
+		j = i;
 		i = ch[i];
+	}
+	cout << temp << endl;
+	return temp;
+}
+
+void flotmax(int **c, int **&f, int s, int t)
+{
+	// on initialise la matrice des flux
+	f = new int * [t+1];
+	for(int i = 0; i < t+1; i++)
+		f[i] = new int[t+1];
+	for(int i = 0; i < t+1; i++)
+	{
+		for(int j = 0; j < t+1; j++)
+		{
+			f[i][j] = 0;
+		}
+	}
+	
+	// tableau de la liste des arcs de la chaine augmentante
+	int *ch;
+	ch = new int[t+1];
+	chaineaugmentante(ch,c,f,s,t);
+	while(ch[t] != -1)
+	{
+		int augm = increment(ch,c,f,s,t);
+		int i = ch[t];
+		int j = t;
+		while(true)
+		{
+			if(i == s) 
+			{
+				f[i][j] += augm;
+				break;
+			}
+			f[i][j] += augm;
+			j = i;
+			i = ch[i];
+		}
+		chaineaugmentante(ch,c,f,s,t);
+		cout << ch[t] << endl;
 	}
 }
 
 int main()
 {
-  // matrice des capacités :
-  int **c;
-  // matrice des flots
-  int **f;
-  // sommet source toujours le premier sommet donc 0
-  int s = 0;
-  // sommet destination
-  int t;
+	// matrice des capacités :
+	int **c;
+	// matrice des flots
+	int **f;
+	// sommet source toujours le premier sommet donc 0
+	int s = 0;
+	// sommet destination
+	int t;
 
 	// on remplit la matrice des capacités et le sommet destination
 	remplissage(t,c);
-	// on initialise la matrice des flux
-	int taille = (int) sqrt(t+1);
-	f = new int * [taille];
-	for(int i = 0; i < taille; i++)
-			f[i] = new int[taille];
-	for(int i = 0; i < taille; i++)
+	
+	// calcul du flot max
+	flotmax(c,f,s,t);
+	
+	// affichage du flot max
+	for(int i = 0; i < t+1; i++)
 	{
-		for(int j = 0; j < taille; j++)
+		for(int j = 0; j < t+1; j++)
 		{
-			f[i][j] = 0;
+			cout << f[i][j] << " " ;
 		}
+		cout << endl ;
 	}
-
-  // tableau d'éléments
-  int *ch;
-  chaineaugmentante(ch,c,f,s,t);
-
-  return 0;
+	return 0;
 }
